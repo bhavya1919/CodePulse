@@ -128,14 +128,16 @@ export function Navbar() {
             <img
               src="/logo-navbar.png"
               alt="Code Pulse"
-              className="h-9 w-auto max-w-[140px] object-contain object-left sm:h-10 sm:max-w-[200px]"
+              className="-my-3 h-[calc(100%+1.5rem)] w-auto object-cover rounded-xl"
+              style={{ height: "90px" }}
             />
             <span
-              className="hidden sm:block text-xl font-extrabold tracking-tight bg-clip-text text-transparent select-none"
+              className="text-2xl sm:text-3xl font-black tracking-tight bg-clip-text text-transparent select-none leading-none"
               style={{
                 backgroundImage: "linear-gradient(120deg, #38bdf8 0%, #818cf8 40%, #c084fc 70%, #38bdf8 100%)",
                 backgroundSize: "200% auto",
                 animation: "codepulse-shimmer 3s linear infinite",
+                lineHeight: "1",
               }}
             >
               CodePulse
@@ -153,24 +155,23 @@ export function Navbar() {
             <nav className="hidden items-center gap-1 lg:flex mx-4">
               {(userSession === "candidate"
                 ? [
-                    { to: "/interview", label: "Code" },
-                    { to: "/replay", label: "Replay" },
-                  ]
+                  { to: "/interview", label: "Code" },
+                  { to: "/replay", label: "Replay" },
+                ]
                 : [
-                    { to: "/dashboard", label: "Intelligence" },
-                    { to: "/replay", label: "Replay" },
-                  ]
+                  { to: "/dashboard", label: "Intelligence" },
+                  { to: "/replay", label: "Replay" },
+                ]
               ).map((l) => {
                 const active = path === l.to;
                 return (
                   <Link
                     key={l.to}
                     to={l.to}
-                    className={`rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all ${
-                      active
+                    className={`rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all ${active
                         ? "bg-primary/10 text-primary shadow-glow-primary/5 border border-primary/20"
                         : "text-muted-foreground hover:text-foreground hover:bg-white/5"
-                    }`}
+                      }`}
                   >
                     {l.label}
                   </Link>
