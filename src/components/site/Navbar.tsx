@@ -124,12 +124,28 @@ export function Navbar() {
       <div className="mx-auto mt-4 max-w-[1600px] px-4">
         <div className="glass flex items-center justify-between rounded-2xl px-4 py-3 shadow-glow">
           {/* Logo Section */}
-          <Link to="/" className="flex items-center shrink-0">
+          <Link to="/" className="flex items-center gap-2 shrink-0">
             <img
               src="/logo-navbar.png"
               alt="Code Pulse"
               className="h-9 w-auto max-w-[140px] object-contain object-left sm:h-10 sm:max-w-[200px]"
             />
+            <span
+              className="hidden sm:block text-xl font-extrabold tracking-tight bg-clip-text text-transparent select-none"
+              style={{
+                backgroundImage: "linear-gradient(120deg, #38bdf8 0%, #818cf8 40%, #c084fc 70%, #38bdf8 100%)",
+                backgroundSize: "200% auto",
+                animation: "codepulse-shimmer 3s linear infinite",
+              }}
+            >
+              CodePulse
+            </span>
+            <style>{`
+              @keyframes codepulse-shimmer {
+                0%   { background-position: 0% center; }
+                100% { background-position: 200% center; }
+              }
+            `}</style>
           </Link>
 
           {/* Center Navigation */}
@@ -194,9 +210,7 @@ export function Navbar() {
                     <Lock className="h-3 w-3 text-primary/70" />
                     Encrypted Session
                   </div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground/60 italic font-medium">
-                    No video or screen capture enabled
-                  </div>
+
                 </div>
 
                 <div className="flex items-center gap-3">
