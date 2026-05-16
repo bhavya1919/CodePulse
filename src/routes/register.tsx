@@ -64,7 +64,9 @@ function RegisterPage() {
     const result = await register(email, password, name, role);
 
     if (result.success) {
-      toast.success("Registration successful. Please check your email to verify or proceed to login.");
+      toast.success(
+        "Registration successful. Please check your email to verify or proceed to login.",
+      );
       setTimeout(() => {
         navigate({ to: "/login" });
       }, 2000);

@@ -62,6 +62,7 @@ function LoginPage() {
     const result = await login(email, password);
 
     if (result.success) {
+      setIsLoading(false);
       toast.success("Intelligence credentials authorized.");
       if (result.role === "recruiter") {
         navigate({ to: "/dashboard" });

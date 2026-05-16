@@ -1,13 +1,27 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-// You will need to provide these in your .env.local file
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
+function readEnv(...keys: (keyof ImportMetaEnv)[]): string | undefined {
+  for (const key of keys) {
+    const value = import.meta.env[key];
+    if (typeof value === "string" && value.trim().length > 0) {
+      return value.trim();
+    }
+  }
+  return undefined;
+}
 
-if (!supabaseUrl || !supabaseAnonKey) {
+const supabaseUrl = readEnv("VITE_SUPABASE_URL");
+const supabaseKey = readEnv("VITE_SUPABASE_ANON_KEY", "VITE_SUPABASE_PUBLISHABLE_KEY");
+
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseKey);
+
+if (!isSupabaseConfigured && typeof window !== "undefined") {
   console.warn(
-    "Supabase credentials are not set. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env or .env.local file."
+    "[Supabase] Missing VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (or VITE_SUPABASE_PUBLISHABLE_KEY). Auth will be unavailable.",
   );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Imported only on the client via auth-context.tsx dynamic import().
+export const supabase: SupabaseClient | null = isSupabaseConfigured
+  ? createClient(supabaseUrl!, supabaseKey!)
+  : null;

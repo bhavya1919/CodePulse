@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { supabase } from "./supabase";
 
 export type UserSession = "unauthenticated" | "candidate" | "recruiter";
 
@@ -7,12 +6,44 @@ interface AuthContextType {
   userSession: UserSession;
   userName: string;
   userEmail: string;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string; role?: UserSession }>;
-  register: (email: string, password: string, name: string, role: UserSession) => Promise<{ success: boolean; error?: string }>;
+  login: (
+    email: string,
+    password: string,
+  ) => Promise<{ success: boolean; error?: string; role?: UserSession }>;
+  register: (
+    email: string,
+    password: string,
+    name: string,
+    role: UserSession,
+  ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+async function getSupabaseClient() {
+  if (typeof window === "undefined") return null;
+  const { supabase, isSupabaseConfigured } = await import("./supabase");
+  if (!isSupabaseConfigured || !supabase) return null;
+  return supabase;
+}
+
+function applySession(
+  session: { user: { email?: string; user_metadata?: Record<string, unknown> } } | null,
+  setUserSession: (s: UserSession) => void,
+  setUserName: (n: string) => void,
+  setUserEmail: (e: string) => void,
+) {
+  if (session?.user) {
+    setUserSession((session.user.user_metadata?.role as UserSession) || "candidate");
+    setUserName((session.user.user_metadata?.name as string) || "");
+    setUserEmail(session.user.email || "");
+  } else {
+    setUserSession("unauthenticated");
+    setUserName("");
+    setUserEmail("");
+  }
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [userSession, setUserSession] = useState<UserSession>("unauthenticated");
@@ -21,67 +52,81 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUserSession((session.user.user_metadata?.role as UserSession) || "candidate");
-        setUserName(session.user.user_metadata?.name || "");
-        setUserEmail(session.user.email || "");
-      } else {
-        setUserSession("unauthenticated");
-        setUserName("");
-        setUserEmail("");
+    let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
+
+    void getSupabaseClient().then((client) => {
+      if (cancelled) return;
+
+      if (!client) {
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+
+      void client.auth.getSession().then(({ data: { session } }) => {
+        if (cancelled) return;
+        applySession(session, setUserSession, setUserName, setUserEmail);
+        setLoading(false);
+      });
+
+      const {
+        data: { subscription },
+      } = client.auth.onAuthStateChange((_event, session) => {
+        if (cancelled) return;
+        applySession(session, setUserSession, setUserName, setUserEmail);
+      });
+
+      unsubscribe = () => subscription.unsubscribe();
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUserSession((session.user.user_metadata?.role as UserSession) || "candidate");
-        setUserName(session.user.user_metadata?.name || "");
-        setUserEmail(session.user.email || "");
-      } else {
-        setUserSession("unauthenticated");
-        setUserName("");
-        setUserEmail("");
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const client = await getSupabaseClient();
+    if (!client) {
+      return {
+        success: false,
+        error: "Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.",
+      };
+    }
+    const { data, error } = await client.auth.signInWithPassword({ email, password });
     if (error) return { success: false, error: error.message };
-    return { 
-      success: true, 
-      role: (data.user?.user_metadata?.role as UserSession) || "candidate" 
+    return {
+      success: true,
+      role: (data.user?.user_metadata?.role as UserSession) || "candidate",
     };
   };
 
   const register = async (email: string, password: string, name: string, role: UserSession) => {
-    const { error } = await supabase.auth.signUp({
+    const client = await getSupabaseClient();
+    if (!client) {
+      return {
+        success: false,
+        error: "Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.",
+      };
+    }
+    const { error } = await client.auth.signUp({
       email,
       password,
-      options: {
-        data: { name, role },
-      },
+      options: { data: { name, role } },
     });
     if (error) return { success: false, error: error.message };
     return { success: true };
   };
 
   const logout = async () => {
-    await supabase.auth.signOut();
+    const client = await getSupabaseClient();
+    if (client) await client.auth.signOut();
   };
 
-  if (loading) {
-    return null;
-  }
+  if (loading) return null;
 
   return (
-    <AuthContext.Provider
-      value={{ userSession, userName, userEmail, login, register, logout }}
-    >
+    <AuthContext.Provider value={{ userSession, userName, userEmail, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

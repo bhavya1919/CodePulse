@@ -194,10 +194,11 @@ function Dashboard() {
                   }
                   setActiveTab(item.id);
                 }}
-                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-all group ${activeTab === item.id
-                  ? "bg-primary/10 text-primary shadow-glow-primary/10 border border-primary/20"
-                  : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
-                  }`}
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-all group ${
+                  activeTab === item.id
+                    ? "bg-primary/10 text-primary shadow-glow-primary/10 border border-primary/20"
+                    : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+                }`}
               >
                 <item.icon
                   className={`h-4 w-4 ${activeTab === item.id ? "text-primary" : "group-hover:text-primary transition-colors"}`}
@@ -660,11 +661,10 @@ function CandidateSettingsTab() {
                     <div className="text-xs text-muted-foreground">{item.desc}</div>
                   </div>
                   <div
-                    onClick={() =>
-                      setPrefs((prev) => ({ ...prev, [item.id]: !prev[item.id] }))
-                    }
-                    className={`h-6 w-11 rounded-full p-1 cursor-pointer transition-colors ${prefs[item.id] ? "bg-primary" : "bg-white/10"
-                      }`}
+                    onClick={() => setPrefs((prev) => ({ ...prev, [item.id]: !prev[item.id] }))}
+                    className={`h-6 w-11 rounded-full p-1 cursor-pointer transition-colors ${
+                      prefs[item.id] ? "bg-primary" : "bg-white/10"
+                    }`}
                   >
                     <motion.div
                       animate={{ x: prefs[item.id] ? 20 : 0 }}
@@ -1219,12 +1219,13 @@ function AnomalyFlagsTab() {
             </div>
             <div className="flex items-center gap-4">
               <span
-                className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border ${f.status === "Flagged"
-                  ? "bg-danger/10 text-danger border-danger/20"
-                  : f.status === "Reviewing"
-                    ? "bg-warning/10 text-warning border-warning/20"
-                    : "bg-success/10 text-success border-success/20"
-                  }`}
+                className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border ${
+                  f.status === "Flagged"
+                    ? "bg-danger/10 text-danger border-danger/20"
+                    : f.status === "Reviewing"
+                      ? "bg-warning/10 text-warning border-warning/20"
+                      : "bg-success/10 text-success border-success/20"
+                }`}
               >
                 {f.status}
               </span>
@@ -1348,12 +1349,13 @@ function CandidateTable({
               )}
               <td className="px-6 py-4">
                 <div
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter ${cand.status === "Live"
-                    ? "bg-success/10 text-success border border-success/20"
-                    : cand.status === "Screening"
-                      ? "bg-accent/10 text-accent border border-accent/20"
-                      : "bg-white/5 text-muted-foreground border border-white/10"
-                    }`}
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter ${
+                    cand.status === "Live"
+                      ? "bg-success/10 text-success border border-success/20"
+                      : cand.status === "Screening"
+                        ? "bg-accent/10 text-accent border border-accent/20"
+                        : "bg-white/5 text-muted-foreground border border-white/10"
+                  }`}
                 >
                   {cand.status === "Live" && (
                     <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
@@ -1537,18 +1539,18 @@ function RiskDistributionCard() {
 function LiveCognitiveStream({ liveSession }: { liveSession: BehavioralSession | null }) {
   const events = liveSession
     ? liveSession.events
-      .slice(-5)
-      .reverse()
-      .map((e) => ({
-        t: new Date(e.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        m: e.label || `${e.type.charAt(0).toUpperCase() + e.type.slice(1)} detected`,
-        type: e.type === "paste" || e.type === "anomaly" ? "warning" : "primary",
-      }))
+        .slice(-5)
+        .reverse()
+        .map((e) => ({
+          t: new Date(e.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          m: e.label || `${e.type.charAt(0).toUpperCase() + e.type.slice(1)} detected`,
+          type: e.type === "paste" || e.type === "anomaly" ? "warning" : "primary",
+        }))
     : [
-      { t: "12:04", m: "Semantic restructuring (Jessica Wong)", type: "primary" },
-      { t: "12:01", m: "Stable continuity phase (Alex Johnson)", type: "success" },
-      { t: "11:58", m: "Optimization transition (Marcus Miller)", type: "primary" },
-    ];
+        { t: "12:04", m: "Semantic restructuring (Jessica Wong)", type: "primary" },
+        { t: "12:01", m: "Stable continuity phase (Alex Johnson)", type: "success" },
+        { t: "11:58", m: "Optimization transition (Marcus Miller)", type: "primary" },
+      ];
   return (
     <div className="glass-strong rounded-3xl p-6 border-white/5 shadow-xl flex flex-col h-[320px]">
       <h3 className="text-sm font-bold tracking-tight mb-4 flex items-center gap-2">
@@ -1624,19 +1626,19 @@ function BehavioralAnomaliesFeed({
 }) {
   const anomalies = liveSession
     ? liveSession.events
-      .filter((e) => e.type === "paste" || e.type === "anomaly")
-      .slice(-4)
-      .map((e) => ({
-        type: e.label || "Behavioral Flag",
-        candidate: liveSession.candidateName,
-        severity: e.type === "paste" ? "High" : "Med",
-        time: new Date(e.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      }))
+        .filter((e) => e.type === "paste" || e.type === "anomaly")
+        .slice(-4)
+        .map((e) => ({
+          type: e.label || "Behavioral Flag",
+          candidate: liveSession.candidateName,
+          severity: e.type === "paste" ? "High" : "Med",
+          time: new Date(e.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        }))
     : [
-      { type: "Logic Leap", candidate: "Sarah Chen", severity: "High", time: "14:22" },
-      { type: "Semantic Shift", candidate: "Marcus Miller", severity: "Med", time: "11:58" },
-      { type: "Paste Pattern", candidate: "Unknown", severity: "Med", time: "09:12" },
-    ];
+        { type: "Logic Leap", candidate: "Sarah Chen", severity: "High", time: "14:22" },
+        { type: "Semantic Shift", candidate: "Marcus Miller", severity: "Med", time: "11:58" },
+        { type: "Paste Pattern", candidate: "Unknown", severity: "Med", time: "09:12" },
+      ];
 
   return (
     <div className="glass-strong rounded-3xl p-6 border-white/5 shadow-xl">
@@ -1705,10 +1707,11 @@ function PipelineStage({
 }) {
   return (
     <button
-      className={`flex-1 p-4 rounded-2xl border transition-all text-left ${active
-        ? "bg-primary/10 border-primary/30 shadow-glow-primary/5"
-        : "bg-white/[0.02] border-white/5 hover:border-white/20"
-        }`}
+      className={`flex-1 p-4 rounded-2xl border transition-all text-left ${
+        active
+          ? "bg-primary/10 border-primary/30 shadow-glow-primary/5"
+          : "bg-white/[0.02] border-white/5 hover:border-white/20"
+      }`}
     >
       <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
         {label}
