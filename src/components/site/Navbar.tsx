@@ -1,6 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  Shield,
   Activity,
   User,
   Search,
@@ -125,20 +124,12 @@ export function Navbar() {
       <div className="mx-auto mt-4 max-w-[1600px] px-4">
         <div className="glass flex items-center justify-between rounded-2xl px-4 py-3 shadow-glow">
           {/* Logo Section */}
-          <Link to="/" className="flex items-center gap-2.5 shrink-0">
-            <div
-              className="relative grid h-9 w-9 place-items-center rounded-xl"
-              style={{ background: "var(--gradient-primary)" }}
-            >
-              <Shield className="h-5 w-5 text-primary-foreground" />
-              <span className="absolute inset-0 rounded-xl shadow-glow" />
-            </div>
-            <div className="hidden leading-tight md:block">
-              <div className="text-sm font-bold tracking-tight">Technical Integrity Guard</div>
-              <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-medium">
-                Behavioral Engineering Intelligence
-              </div>
-            </div>
+          <Link to="/" className="flex items-center shrink-0">
+            <img
+              src="/logo-navbar.png"
+              alt="Code Pulse"
+              className="h-9 w-auto max-w-[140px] object-contain object-left sm:h-10 sm:max-w-[200px]"
+            />
           </Link>
 
           {/* Center Navigation */}

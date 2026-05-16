@@ -62,13 +62,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Technical Integrity Guard — Behavioral Engineering Intelligence" },
+      { title: "Code Pulse — Behavioral Engineering Intelligence" },
       {
         name: "description",
         content:
           "Cognitive coding analytics and integrity-aware hiring infrastructure for the AI era.",
       },
-      { property: "og:title", content: "Technical Integrity Guard" },
+      { property: "og:title", content: "Code Pulse" },
       {
         property: "og:description",
         content: "Understand how engineers think — not just what they submit.",
@@ -77,6 +77,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "apple-touch-icon", href: "/favicon.png" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
