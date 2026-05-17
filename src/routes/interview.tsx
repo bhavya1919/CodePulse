@@ -731,6 +731,10 @@ function InterviewPage() {
   useEffect(() => {
     if (userSession === "unauthenticated") {
       navigate({ to: "/login" });
+      return;
+    }
+    if (userSession === "recruiter") {
+      navigate({ to: "/dashboard" });
     }
   }, [userSession, navigate]);
 

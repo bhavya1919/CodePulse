@@ -139,6 +139,10 @@ function Dashboard() {
   useEffect(() => {
     if (userSession === "unauthenticated") {
       navigate({ to: "/login" });
+      return;
+    }
+    if (userSession === "candidate") {
+      navigate({ to: "/interview" });
     }
   }, [userSession, navigate]);
 

@@ -59,7 +59,7 @@ function LoginPage() {
     setError("");
     setIsLoading(true);
 
-    const result = await login(email, password);
+    const result = await login(email, password, role === "recruiter" ? "recruiter" : "candidate");
 
     if (result.success) {
       setIsLoading(false);

@@ -2,6 +2,12 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 export type UserSession = "unauthenticated" | "candidate" | "recruiter";
 
+/** Normalize role from Supabase user_metadata (string casing / missing values). */
+export function normalizeUserRole(value: unknown): "candidate" | "recruiter" {
+  const raw = typeof value === "string" ? value.trim().toLowerCase() : "";
+  return raw === "recruiter" ? "recruiter" : "candidate";
+}
+
 interface AuthContextType {
   userSession: UserSession;
   userName: string;
@@ -9,6 +15,7 @@ interface AuthContextType {
   login: (
     email: string,
     password: string,
+    intendedRole?: "candidate" | "recruiter",
   ) => Promise<{ success: boolean; error?: string; role?: UserSession }>;
   register: (
     email: string,
@@ -35,7 +42,7 @@ function applySession(
   setUserEmail: (e: string) => void,
 ) {
   if (session?.user) {
-    setUserSession((session.user.user_metadata?.role as UserSession) || "candidate");
+    setUserSession(normalizeUserRole(session.user.user_metadata?.role));
     setUserName((session.user.user_metadata?.name as string) || "");
     setUserEmail(session.user.email || "");
   } else {
@@ -85,7 +92,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (
+    email: string,
+    password: string,
+    intendedRole?: "candidate" | "recruiter",
+  ) => {
     const client = await getSupabaseClient();
     if (!client) {
       return {
@@ -95,9 +106,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     const { data, error } = await client.auth.signInWithPassword({ email, password });
     if (error) return { success: false, error: error.message };
+
+    const metadataRole = normalizeUserRole(data.user?.user_metadata?.role);
+    const sessionRole =
+      intendedRole === "recruiter" || intendedRole === "candidate" ? intendedRole : metadataRole;
+
+    // Keep Supabase profile in sync with the role tab chosen at login
+    if (intendedRole && intendedRole !== metadataRole) {
+      const { error: updateError } = await client.auth.updateUser({
+        data: {
+          ...(data.user?.user_metadata ?? {}),
+          role: intendedRole,
+        },
+      });
+      if (updateError) {
+        console.warn("Could not update user role in profile:", updateError.message);
+      }
+    }
+
+    setUserSession(sessionRole);
+    setUserName((data.user?.user_metadata?.name as string) || "");
+    setUserEmail(data.user?.email || "");
+
     return {
       success: true,
-      role: (data.user?.user_metadata?.role as UserSession) || "candidate",
+      role: sessionRole,
     };
   };
 
