@@ -52,7 +52,7 @@ const formatTime = (ms: number) => {
 };
 
 export const Route = createFileRoute("/replay")({
-  head: () => ({ meta: [{ title: "Session Replay · Technical Integrity Guard" }] }),
+  head: () => ({ meta: [{ title: "Session Replay · Code Pulse" }] }),
   component: ReplayPage,
 });
 

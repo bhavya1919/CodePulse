@@ -33,7 +33,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User as UserIcon, Briefcase } from "lucide-react";
 
 export const Route = createFileRoute("/register")({
-  head: () => ({ meta: [{ title: "Enterprise Registration · Technical Integrity Guard" }] }),
+  head: () => ({ meta: [{ title: "Enterprise Registration · Code Pulse" }] }),
   component: RegisterPage,
 });
 

@@ -44,7 +44,7 @@ import { useAuth } from "@/lib/auth-context";
 import { TelemetryStore, BehavioralSession, TelemetryEvent } from "@/lib/telemetry-store";
 
 export const Route = createFileRoute("/interview")({
-  head: () => ({ meta: [{ title: "Candidate Interview · Technical Integrity Guard" }] }),
+  head: () => ({ meta: [{ title: "Candidate Interview · Code Pulse" }] }),
   component: InterviewPage,
 });
 

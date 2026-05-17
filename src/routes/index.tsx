@@ -28,7 +28,7 @@ import { Sparkline } from "@/components/site/Sparkline";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Technical Integrity Guard — Behavioral Engineering Intelligence" },
+      { title: "Code Pulse — Behavioral Engineering Intelligence" },
       {
         name: "description",
         content:
